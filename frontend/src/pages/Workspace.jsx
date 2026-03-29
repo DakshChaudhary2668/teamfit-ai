@@ -506,7 +506,7 @@ export default function Workspace() {
               <div className="ws-panel-empty">No team members found</div>
             ) : (
               students.map((s) => {
-                const badge = getBadgeInfo(s.score || 0);
+                const badge = getBadgeInfo(s.contribution || 0);
                 const contribution = s.contribution || 0;
                 return (
                   <div key={s.student} className="ws-contributor-card">
