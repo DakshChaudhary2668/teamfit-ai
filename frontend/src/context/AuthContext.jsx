@@ -10,17 +10,29 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Restore session from localStorage
+    // Restore login from localStorage
     const savedUser = localStorage.getItem('teamfit_user');
     const savedToken = localStorage.getItem('teamfit_token');
-    const savedSession = localStorage.getItem('teamfit_session_id');
-    const savedCode = localStorage.getItem('teamfit_session_code');
     if (savedUser && savedToken) {
       setUser(JSON.parse(savedUser));
       setToken(savedToken);
     }
-    if (savedSession) setSessionId(savedSession);
-    if (savedCode) setSessionCode(savedCode);
+
+    // Only restore session if this is the SAME tab (not a new one)
+    // sessionStorage is unique per tab and clears on close
+    const isReturningTab = sessionStorage.getItem('teamfit_tab_active');
+    if (isReturningTab) {
+      const savedSession = localStorage.getItem('teamfit_session_id');
+      const savedCode = localStorage.getItem('teamfit_session_code');
+      if (savedSession) setSessionId(savedSession);
+      if (savedCode) setSessionCode(savedCode);
+    } else {
+      // New tab — clear old session so user starts fresh at lobby
+      sessionStorage.setItem('teamfit_tab_active', 'true');
+      localStorage.removeItem('teamfit_session_id');
+      localStorage.removeItem('teamfit_session_code');
+    }
+
     setLoading(false);
   }, []);
 
